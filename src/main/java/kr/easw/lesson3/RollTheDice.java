@@ -29,6 +29,9 @@ public class RollTheDice {
      * 또한, 입력값이 double임으로 60으로 나눈 이후 int로 캐스팅이 필요합니다.
      */
     private static void fillArray(double result) {
+        if (result < 0) {
+            return;
+        }
         int res = (int) (result / 60);
         if (res > 5) {
             frequency = extendArray(res + 1);
