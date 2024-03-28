@@ -1,7 +1,5 @@
 package kr.easw.lesson3;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -29,27 +27,51 @@ public class SnakeGameWithoutTails {
                 System.out.printf("점수: %d\n", score);
                 break;
             }
-            if (!hasItemOnBoard())
+            if (!hasItemOnBoard()) {
                 placeRandomItem();
+            }
         }
     }
 
     /**
-     * 해당 메서드는 다음과 같은 역할을 가져야 합니다 :
-     * 사용자의 입력을 받고, 다음 위치로 옮기거나 게임을 종료해야 합니다.
+     * 해당 메서드는 다음과 같은 역할을 가져야 합니다 : 사용자의 입력을 받고, 다음 위치로 옮기거나 게임을 종료해야 합니다.
      * <p>
-     * 허용되는 입력은 다음과 같습니다 :
-     * - 우측(r) | 좌측 (l) | 위 (u) | 아래 (d) | 종료 (0)
+     * 허용되는 입력은 다음과 같습니다 : - 우측(r) | 좌측 (l) | 위 (u) | 아래 (d) | 종료 (0)
      * <p>
-     * 다음 좌표는 location 변수에 계속해서 업데이트되어야 합니다.
-     * 만약 다음 좌표에 아이템이 존재한다면, 점수를 1 증가하고 다음 좌표의 값을 0으로 되돌려야 합니다.
-     *
+     * 다음 좌표는 location 변수에 계속해서 업데이트되어야 합니다. 만약 다음 좌표에 아이템이 존재한다면, 점수를 1 증가하고 다음 좌표의 값을 0으로 되돌려야
+     * 합니다.
+     * <p>
      * 만약 값이 최대 값 (BOARD_SIZE)이상이 되거나 최소 값(0) 아래로 내려간다면 같은 좌표로 설정하여 이동하지 않도록 해야합니다.
-     *
+     * <p>
      * 만약 사용자의 입력이 종료(0)였다면, false값을 반환하여 게임을 종료해야 합니다.
      */
     private static boolean nextDirection(String keyword) {
-        throw new RuntimeException("이 코드 라인을 지우고, 이곳에서 작성하십시오.");
+        SnakeLocation cur = new SnakeLocation(0, 0);
+
+        if (keyword.equals("r")) {
+            cur = location.adjust(0, 1);
+        } else if (keyword.equals("l")) {
+            cur = location.adjust(0, -1);
+        } else if (keyword.equals("u")) {
+            cur = location.adjust(-1, 0);
+        } else if (keyword.equals("d")) {
+            cur = location.adjust(1, 0);
+        } else if (keyword.equals("0")) {
+            return false;
+        }
+
+        if ((cur.getX() < 0 || cur.getX() >= BOARD_SIZE) || (cur.getY() < 0
+            || cur.getY() >= BOARD_SIZE)) {
+            return true;
+        }
+        board[location.getX()][location.getY()] = 0;
+        if (board[cur.getX()][cur.getY()] == 2) {
+            score++;
+            board[cur.getX()][cur.getY()] = 0;
+        }
+        board[cur.getX()][cur.getY()] = 1;
+        location = cur;
+        return true;
     }
 
     private static void printBoard() {
@@ -70,7 +92,7 @@ public class SnakeGameWithoutTails {
                         System.out.print("◼");
                         break;
                     case 2:
-                        System.out.println("* ");
+                        System.out.print("* "); //개행 없앰
                         break;
                 }
             }
@@ -84,7 +106,8 @@ public class SnakeGameWithoutTails {
         for (int i = 0; i < toPlace; i++) {
             int retry = 0;
             while (retry < 5) {
-                SnakeLocation locate = new SnakeLocation(RANDOM.nextInt() * BOARD_SIZE, RANDOM.nextInt() * BOARD_SIZE);
+                SnakeLocation locate = new SnakeLocation(RANDOM.nextInt(BOARD_SIZE), // 인덱스 범위 이상함
+                    RANDOM.nextInt(BOARD_SIZE));
                 if (board[locate.getX()][locate.getY()] != 0) {
                     retry++;
                     continue;
@@ -107,6 +130,7 @@ public class SnakeGameWithoutTails {
     }
 
     private static class SnakeLocation {
+
         private final int x;
         private final int y;
 
